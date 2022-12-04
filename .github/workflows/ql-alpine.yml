@@ -3,11 +3,6 @@ on:
   schedule:
     - cron: 16 6 */3 * *
   workflow_dispatch:
-    inputs:
-      tag:
-        description: '要使用的tag'
-        required: false
-        default: 'latest'
 env:
   IMAGE_NAME: alpine-ql
 
@@ -135,7 +130,5 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}      
       - name: Combine two images
         run: |
-          docker manifest create ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }} --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:s390x --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:arm64 --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:amd64
-          docker manifest push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }}
           docker manifest create ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest--amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:s390x --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:arm64 --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:amd64
           docker manifest push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
