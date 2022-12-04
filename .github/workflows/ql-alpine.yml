@@ -1,0 +1,139 @@
+name: 构建镜像：alpine-ql
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要使用的tag'
+        required: false
+        default: 'latest'
+env:
+  IMAGE_NAME: alpine-ql
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-latest
+    name: 构建镜像：alpine-ql-amd64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+          
+      - name: Set Up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set Up Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Login DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set Up Cache
+        uses: actions/cache@v3
+        id: buildx-cache
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx
+
+      - name: Buildx
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ env.IMAGE_NAME }}
+          file: ${{ env.IMAGE_NAME }}/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:amd64
+
+  build-arm64:
+    runs-on: ubuntu-latest
+    name: 构建镜像：alpine-ql-arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+          
+      - name: Set Up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set Up Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Login DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set Up Cache
+        uses: actions/cache@v3
+        id: buildx-cache
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx
+
+      - name: Buildx
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ env.IMAGE_NAME }}
+          file: ${{ env.IMAGE_NAME }}/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:arm64
+
+  build-s390x:
+    runs-on: ubuntu-latest
+    name: 构建镜像：alpine-ql-s390x
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+          
+      - name: Set Up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set Up Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Login DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set Up Cache
+        uses: actions/cache@v3
+        id: buildx-cache
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx
+
+      - name: Buildx
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ env.IMAGE_NAME }}
+          file: ${{ env.IMAGE_NAME }}/Dockerfile
+          platforms: linux/s390x
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:s390x
+  combine-images:
+    runs-on: ubuntu-latest
+    needs:
+      - build-s390x
+      - build-amd64
+      - build-arm64
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}      
+      - name: Combine two images
+        run: |
+          docker manifest create ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }} --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:s390x --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:arm64 --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:amd64
+          docker manifest push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }}
+          docker manifest create ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest--amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:s390x --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:arm64 --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:amd64
+          docker manifest push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
