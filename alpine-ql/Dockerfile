@@ -37,7 +37,7 @@ RUN set -x \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && npm install -g pnpm \
-    && pnpm add -g @types/node pm2 ts-node typescript tslib \
+    && pnpm add -g @types/node pm2 ts-node typescript tslib @louislam/sqlite3 \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w --no-cache-dir \
     && rm -rf /root/.pnpm-store \
     && rm -rf /root/.local/share/pnpm/store \
