@@ -39,6 +39,10 @@ RUN set -x \
     && npm install -g pnpm \
     && pnpm add -g @types/node pm2 ts-node typescript tslib @louislam/sqlite3 \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w --no-cache-dir \
+    && crontab -l > cron_bkp \
+    && echo "0 */4 * * * /usr/sbin/ntpdate ntp3.aliyun.com >> /dev/null 2>&1" >> cron_bkp \
+    && crontab cron_bkp \
+    && rm cron_bkp \
     && rm -rf /root/.pnpm-store \
     && rm -rf /root/.local/share/pnpm/store \
     && rm -rf /root/.cache \
