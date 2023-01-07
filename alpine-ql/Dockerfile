@@ -38,7 +38,7 @@ RUN set -x \
     && echo "Asia/Shanghai" > /etc/timezone \
     && npm install -g pnpm \
     && pnpm add -g @types/node pm2 ts-node typescript tslib @louislam/sqlite3 \
-    && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w --no-cache-dir \
+    && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && crontab -l > cron_bkp \
     && echo "0 */4 * * * /usr/sbin/ntpdate ntp3.aliyun.com >> /dev/null 2>&1" >> cron_bkp \
     && crontab cron_bkp \
