@@ -4,7 +4,18 @@ ADD https://raw.githubusercontent.com/whyour/qinglong/develop/.npmrc /tmp/build/
 ADD https://raw.githubusercontent.com/whyour/qinglong/develop/package.json /tmp/build/
 RUN set -x \
     && apk update \
-    && apk add nodejs npm \
+    && apk --no-cache add -f coreutils \
+                             moreutils \
+                             perl \
+                             openssl \
+                             nodejs \
+                             npm \
+                             jq \
+                             openssh \
+                             make \
+                             gcc \
+                             g++ \
+                             libc-dev \
     && npm i -g pnpm \
     && cd /tmp/build \
     && pnpm install --prod
