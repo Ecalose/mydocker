@@ -17,6 +17,7 @@ RUN set -x \
                              g++ \
                              libc-dev \
     && npm i -g pnpm \
+    && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && cd /tmp/build \
     && pnpm install --prod
 FROM python:3.9-alpine
@@ -29,7 +30,7 @@ ENV PNPM_HOME=/root/.local/share/pnpm \
     QL_DIR=/ql
 
 WORKDIR ${QL_DIR}
-
+COPY --from=builder /usr/local/lib/python3.9/site-packages/. /usr/local/lib/python3.9/site-packages/
 RUN set -x \
     && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
     && apk update -f \
@@ -48,8 +49,6 @@ RUN set -x \
                              npm \
                              jq \
                              openssh \
-                             gcc \
-                             libc-dev \
                              fish \
                              nano \
     && rm -rf /var/cache/apk/* \
@@ -57,7 +56,6 @@ RUN set -x \
     && echo "Asia/Shanghai" > /etc/timezone \
     && npm install -g pnpm \
     && pnpm add -g pm2 ts-node typescript tslib \
-    && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && crontab -l > cron_bkp \
     && echo "0 */4 * * * /usr/sbin/ntpdate ntp3.aliyun.com >> /dev/null 2>&1" >> cron_bkp \
     && crontab cron_bkp \
