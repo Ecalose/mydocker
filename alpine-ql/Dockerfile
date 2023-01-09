@@ -48,9 +48,7 @@ RUN set -x \
                              npm \
                              jq \
                              openssh \
-                             make \
                              gcc \
-                             g++ \
                              libc-dev \
                              fish \
                              nano \
