@@ -22,12 +22,7 @@ RUN set -x \
     && pnpm install --prod
 FROM python:3.9-alpine
 
-ENV PNPM_HOME=/root/.local/share/pnpm \
-    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/share/pnpm:/root/.local/share/pnpm/global/5/node_modules:$PNPM_HOME \
-    LANG=zh_CN.UTF-8 \
-    SHELL=/bin/bash \
-    PS1="\u@\h:\w \$ " \
-    QL_DIR=/ql
+ENV QL_DIR=/ql
 
 WORKDIR ${QL_DIR}
 COPY --from=builder /usr/local/lib/python3.9/site-packages/. /usr/local/lib/python3.9/site-packages/
