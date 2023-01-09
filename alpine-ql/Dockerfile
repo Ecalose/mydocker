@@ -1,3 +1,12 @@
+FROM python:3.9-alpine as builder
+RUN apk add git && git clone -b develop https://github.com/whyour/qinglong.git
+COPY /ql/package.json /ql/.npmrc /ql/pnpm-lock.yaml /tmp/build/
+RUN set -x \
+    && apk update \
+    && apk add nodejs npm \
+    && npm i -g pnpm \
+    && cd /tmp/build \
+    && pnpm install --prod
 FROM python:3.9-alpine
 
 ENV PNPM_HOME=/root/.local/share/pnpm \
@@ -10,7 +19,7 @@ ENV PNPM_HOME=/root/.local/share/pnpm \
 WORKDIR ${QL_DIR}
 
 RUN set -x \
-    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
     && apk update -f \
     && apk upgrade \
     && apk --no-cache add -f bash \
@@ -37,7 +46,7 @@ RUN set -x \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && npm install -g pnpm \
-    && pnpm add -g @types/node pm2 ts-node typescript tslib @louislam/sqlite3 \
+    && pnpm add -g pm2 ts-node typescript tslib \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && crontab -l > cron_bkp \
     && echo "0 */4 * * * /usr/sbin/ntpdate ntp3.aliyun.com >> /dev/null 2>&1" >> cron_bkp \
@@ -47,3 +56,5 @@ RUN set -x \
     && rm -rf /root/.local/share/pnpm/store \
     && rm -rf /root/.cache \
     && rm -rf /root/.npm
+ARG SOURCE_COMMIT
+COPY --from=builder /tmp/build/node_modules/. /ql/node_modules/
