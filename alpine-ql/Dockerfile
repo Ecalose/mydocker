@@ -1,7 +1,7 @@
 FROM python:3.9-alpine as builder
-ADD https://raw.githubusercontent.com/whyour/qinglong/develop/pnpm-lock.yaml /tmp/build/
-ADD https://raw.githubusercontent.com/whyour/qinglong/develop/.npmrc /tmp/build/
-ADD https://raw.githubusercontent.com/whyour/qinglong/develop/package.json /tmp/build/
+ADD https://raw.githubusercontent.com/whyour/qinglong/develop/pnpm-lock.yaml /ql
+ADD https://raw.githubusercontent.com/whyour/qinglong/develop/.npmrc /ql
+ADD https://raw.githubusercontent.com/whyour/qinglong/develop/package.json /ql
 RUN set -x \
     && apk update \
     && apk --no-cache add -f coreutils \
@@ -64,4 +64,4 @@ RUN set -x \
     && rm -rf /root/.local/share/pnpm/store \
     && rm -rf /root/.cache \
     && rm -rf /root/.npm
-COPY --from=builder /tmp/build/node_modules/. /tmp/build/node_modules/
+COPY --from=builder /ql/node_modules/. /tmp/build/node_modules/
