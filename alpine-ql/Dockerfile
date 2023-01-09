@@ -18,7 +18,7 @@ RUN set -x \
                              libc-dev \
     && npm i -g pnpm \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
-    && cd /tmp/build \
+    && cd /ql \
     && pnpm install --prod
 FROM python:3.9-alpine
 
