@@ -1,7 +1,8 @@
 FROM python:3.9-alpine as builder
-RUN apk update && apk add git
-RUN git clone -b develop https://github.com/whyour/qinglong.git /ql
-COPY /ql/package.json /ql/.npmrc /ql/pnpm-lock.yaml /tmp/build/
+ADD https://raw.githubusercontent.com/whyour/qinglong/develop/pnpm-lock.yaml
+ADD https://raw.githubusercontent.com/whyour/qinglong/develop/.npmrc
+ADD https://raw.githubusercontent.com/whyour/qinglong/develop/package.json
+COPY package.json .npmrc pnpm-lock.yaml /tmp/build/
 RUN set -x \
     && apk update \
     && apk add nodejs npm \
