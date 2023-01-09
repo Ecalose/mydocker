@@ -68,5 +68,4 @@ RUN set -x \
     && rm -rf /root/.local/share/pnpm/store \
     && rm -rf /root/.cache \
     && rm -rf /root/.npm
-ARG SOURCE_COMMIT
 COPY --from=builder /tmp/build/node_modules/. /ql/node_modules/
