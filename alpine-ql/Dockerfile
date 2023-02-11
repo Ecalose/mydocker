@@ -16,6 +16,7 @@ RUN set -x \
                              gcc \
                              g++ \
                              libc-dev \
+                             git \
     && npm i -g pnpm \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && cd /ql \
