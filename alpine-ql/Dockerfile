@@ -17,7 +17,8 @@ RUN set -x \
                              g++ \
                              libc-dev \
                              git \
-    && npm i -g pnpm \
+                             procps \
+    && npm i -g pnpm@8.3.1 \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && cd /ql \
     && pnpm install --prod
@@ -55,7 +56,7 @@ RUN set -x \
     && rm -rf /var/cache/apk/* \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
-    && npm install -g pnpm \
+    && npm i -g pnpm@8.3.1 \
     && pnpm add -g pm2 ts-node typescript tslib \
     && crontab -l > cron_bkp \
     && echo "0 */4 * * * /usr/sbin/ntpdate ntp3.aliyun.com >> /dev/null 2>&1" >> cron_bkp \
