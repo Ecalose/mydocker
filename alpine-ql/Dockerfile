@@ -57,7 +57,7 @@ RUN set -x \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && npm i -g pnpm@8.3.1 \
-    && pnpm add -g pm2 ts-node typescript tslib \
+    && pnpm add -g pm2 tsx \
     && crontab -l > cron_bkp \
     && echo "0 */4 * * * /usr/sbin/ntpdate ntp3.aliyun.com >> /dev/null 2>&1" >> cron_bkp \
     && crontab cron_bkp \
