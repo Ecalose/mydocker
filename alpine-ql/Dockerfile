@@ -17,6 +17,7 @@ RUN set -x \
                              g++ \
                              libc-dev \
                              git \
+                             netcat-openbsd \
                              procps \
     && npm i -g pnpm@8.3.1 \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
@@ -53,6 +54,8 @@ RUN set -x \
                              openssh \
                              fish \
                              nano \
+                             netcat-openbsd \
+                             procps \
     && rm -rf /var/cache/apk/* \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
