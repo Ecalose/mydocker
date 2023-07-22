@@ -1,4 +1,4 @@
-FROM python:3.9-alpine as builder
+FROM python:3.11-alpine as builder
 ADD https://raw.githubusercontent.com/whyour/qinglong/develop/pnpm-lock.yaml /ql/
 ADD https://raw.githubusercontent.com/whyour/qinglong/develop/.npmrc /ql/
 ADD https://raw.githubusercontent.com/whyour/qinglong/develop/package.json /ql/
@@ -23,7 +23,7 @@ RUN set -x \
     && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && cd /ql \
     && pnpm install --prod
-FROM python:3.9-alpine
+FROM python:3.11-alpine
 
 ENV PNPM_HOME=/root/.local/share/pnpm \
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/share/pnpm:/root/.local/share/pnpm/global/5/node_modules:$PNPM_HOME \
