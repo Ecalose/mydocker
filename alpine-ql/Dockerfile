@@ -33,7 +33,7 @@ ENV PNPM_HOME=/root/.local/share/pnpm \
     QL_DIR=/ql
 
 WORKDIR ${QL_DIR}
-COPY --from=builder /usr/local/lib/python3.9/site-packages/. /usr/local/lib/python3.9/site-packages/
+COPY --from=builder /usr/local/lib/python3.11/site-packages/. /usr/local/lib/python3.11/site-packages/
 RUN set -x \
     && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
     && apk update -f \
