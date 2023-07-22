@@ -132,3 +132,4 @@ jobs:
         run: |
           docker manifest create ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:s390x --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:arm64 --amend ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:amd64
           docker manifest push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+      - uses: gautamkrishnar/keepalive-workflow@master 
