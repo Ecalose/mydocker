@@ -20,7 +20,8 @@ RUN set -x \
                              netcat-openbsd \
                              procps \
     && npm i -g pnpm@8.3.1 \
-    && pip3 install requests wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
+    && pip3 install wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
+    && python -m pip install requests "urllib3<2" \
     && cd /ql \
     && pnpm install --prod
 FROM python:3.11-alpine
