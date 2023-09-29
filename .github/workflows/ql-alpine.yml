@@ -8,7 +8,7 @@ env:
 
 jobs:
   build-amd64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: 构建镜像：alpine-ql-amd64
     steps:
       - name: Checkout
@@ -44,7 +44,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:amd64
 
   build-arm64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: 构建镜像：alpine-ql-arm64
     steps:
       - name: Checkout
@@ -80,7 +80,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:arm64
 
   build-s390x:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: 构建镜像：alpine-ql-s390x
     steps:
       - name: Checkout
@@ -115,7 +115,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:s390x
   combine-images:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - build-s390x
       - build-amd64
