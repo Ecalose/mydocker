@@ -19,7 +19,7 @@ RUN set -x \
                              git \
                              netcat-openbsd \
                              procps \
-    && npm i -g pnpm@8.3.1 \
+    && npm install -g pnpm@8.3.1 \
     && pip3 install wheel pysocks pycryptodome aiohttp tomli tomli-w rsa --no-cache-dir \
     && python -m pip install requests "urllib3<2" \
     && cd /ql \
@@ -60,7 +60,7 @@ RUN set -x \
     && rm -rf /var/cache/apk/* \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
-    && npm i -g pnpm@8.3.1 \
+    && npm install -g pnpm@8.3.1 \
     && pnpm add -g pm2 tsx \
     && crontab -l > cron_bkp \
     && echo "0 */4 * * * /usr/sbin/ntpdate ntp3.aliyun.com >> /dev/null 2>&1" >> cron_bkp \
