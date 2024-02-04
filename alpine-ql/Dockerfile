@@ -56,6 +56,7 @@ RUN set -x \
                              fish \
                              nano \
                              netcat-openbsd \
+                             unzip \
                              procps \
     && rm -rf /var/cache/apk/* \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
