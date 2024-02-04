@@ -2,6 +2,7 @@ FROM python:3.11-alpine as builder
 ADD https://raw.githubusercontent.com/whyour/qinglong/develop/pnpm-lock.yaml /ql/
 ADD https://raw.githubusercontent.com/whyour/qinglong/develop/.npmrc /ql/
 ADD https://raw.githubusercontent.com/whyour/qinglong/develop/package.json /ql/
+ENV PNPM_HOME=/root/.local/share/pnpm
 RUN set -x \
     && apk update \
     && apk --no-cache add -f coreutils \
@@ -24,7 +25,7 @@ RUN set -x \
     && python -m pip install requests "urllib3<2" jieba \
     && cd /ql \
     && pnpm install --prod
-RUN pnpm i -g https-proxy-agent ws fs tough-cookie cheerio qrcode-terminal moment jsdom request @types/node tslib ts-md5 crypto-js axios@0.27.2 date-fns png-js ds silly-datetime js-base64 form-data
+RUN npm i -g https-proxy-agent ws fs tough-cookie cheerio qrcode-terminal moment jsdom request @types/node tslib ts-md5 crypto-js axios@0.27.2 date-fns png-js ds silly-datetime js-base64 form-data
 FROM python:3.11-alpine
 
 ENV PNPM_HOME=/root/.local/share/pnpm \
@@ -72,4 +73,5 @@ RUN set -x \
     && rm -rf /root/.local/share/pnpm/store \
     && rm -rf /root/.cache \
     && rm -rf /root/.npm
+COPY --from=builder /ql/node_modules/. /tmp/build/node_modules/
 COPY --from=builder /ql/node_modules/. /tmp/build/node_modules/
