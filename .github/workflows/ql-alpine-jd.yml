@@ -1,4 +1,4 @@
-name: 构建镜像：alpine-ql
+name: 构建镜像：alpine-ql-jd
 on:
   schedule:
     - cron: 23 7 * * *
