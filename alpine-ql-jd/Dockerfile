@@ -74,4 +74,3 @@ RUN set -x \
     && rm -rf /root/.cache \
     && rm -rf /root/.npm
 COPY --from=builder /ql/node_modules/. /tmp/build/node_modules/
-COPY --from=builder /ql/node_modules/. /tmp/build/node_modules/
