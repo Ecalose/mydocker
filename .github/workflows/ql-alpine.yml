@@ -34,7 +34,7 @@ jobs:
           key: ${{ runner.os }}-buildx
 
       - name: Buildx
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ${{ env.IMAGE_NAME }}
           file: ${{ env.IMAGE_NAME }}/Dockerfile
@@ -70,7 +70,7 @@ jobs:
           key: ${{ runner.os }}-buildx
 
       - name: Buildx
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ${{ env.IMAGE_NAME }}
           file: ${{ env.IMAGE_NAME }}/Dockerfile
@@ -106,7 +106,7 @@ jobs:
           key: ${{ runner.os }}-buildx
 
       - name: Buildx
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ${{ env.IMAGE_NAME }}
           file: ${{ env.IMAGE_NAME }}/Dockerfile
