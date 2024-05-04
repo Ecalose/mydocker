@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set Up Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: buildx-cache
         with:
           path: /tmp/.buildx-cache
@@ -63,7 +63,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set Up Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: buildx-cache
         with:
           path: /tmp/.buildx-cache
@@ -99,7 +99,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set Up Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: buildx-cache
         with:
           path: /tmp/.buildx-cache
