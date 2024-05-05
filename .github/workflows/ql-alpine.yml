@@ -107,3 +107,4 @@ jobs:
         name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+      - uses: gautamkrishnar/keepalive-workflow@master
