@@ -103,10 +103,6 @@ jobs:
         run: |
           docker buildx imagetools create -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest \
             $(printf '${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
-      -
-        name: Inspect image
-        run: |
-          docker buildx imagetools inspect ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
   keepalive-job:
     name: Keepalive Workflow
     runs-on: ubuntu-latest
