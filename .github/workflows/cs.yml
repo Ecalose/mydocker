@@ -36,8 +36,8 @@ jobs:
       if: steps.compare_tags.outputs.new_tag == 'true'
       run: |
         echo ${{ steps.get_latest_tag.outputs.tag }} > tag/.ql_previous_tag
-        # git config --global user.email "you@example.com"
-        # git config --global user.name "Your Name"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add tag/.ql_previous_tag
         git commit -m "Update previous tag"
         git push
