@@ -16,7 +16,9 @@ jobs:
       id: get_latest_tag
       run: |
         latest_tag=$(curl -s "https://api.github.com/repos/whyour/qinglong/tags" | jq '.[0].name' | tr -d '"')
-        echo "::set-output name=tag::$latest_tag"
+        # 移除标签前的 'v' 前缀
+        clean_tag=${latest_tag#v}
+        echo "::set-output name=tag::$clean_tag"
 
     - name: Compare Tags
       id: compare_tags
