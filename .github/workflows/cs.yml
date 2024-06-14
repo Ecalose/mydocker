@@ -5,105 +5,51 @@ on:
     - cron: 23 7 * * *
   workflow_dispatch:
 
-env:
-  IMAGE_NAME: alpine-ql-jd
-
 jobs:
-  build:
+  check_tag:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/s390x
-          - linux/arm64
     steps:
-      -
-        name: Prepare
-        run: |
-          platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
-      -
-        name: Checkout
-        uses: actions/checkout@v4
-      -
-        name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push by digest
-        id: build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ${{ env.IMAGE_NAME }}/Dockerfile
-          platforms: ${{ matrix.platform }}
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
-      -
-        name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-      -
-        name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-${{ env.PLATFORM_PAIR }}
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
+    - name: Checkout this repo
+      uses: actions/checkout@v2
 
-  merge:
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      -
-        name: Download digests
-        uses: actions/download-artifact@v4
-        with:
-          path: /tmp/digests
-          pattern: digests-*
-          merge-multiple: true
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      -
-        name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Create manifest list and push
-        working-directory: /tmp/digests
-        run: |
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
-      -
-        name: Inspect image
-        run: |
-          docker buildx imagetools inspect ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+    - name: Get Latest Tag
+      id: get_latest_tag
+      run: |
+        latest_tag=$(curl -s "https://api.github.com/repos/whyour/qinglong/tags" | jq '.[0].name' | tr -d '"')
+        echo "::set-output name=tag::$latest_tag"
+
+    - name: Compare Tags
+      id: compare_tags
+      run: |
+        echo "latest_tag=${{ steps.get_latest_tag.outputs.tag }}"
+        echo "previous_tag=$(cat tag/.ql_previous_tag)"
+        if [ "${{ steps.get_latest_tag.outputs.tag }}" != "$(cat tag/.ql_previous_tag)" ]; then
+          echo "New tag found: ${{ steps.get_latest_tag.outputs.tag }}"
+          echo "::set-output name=new_tag::true"
+          echo "${{ steps.get_latest_tag.outputs.tag }}" > tag/.ql_previous_tag
+        else
+          echo "::set-output name=new_tag::false"
+        fi
+      shell: bash
+
+    - name: Store Previous Tag
+      if: steps.compare_tags.outputs.new_tag == 'true'
+      run: |
+        echo ${{ steps.get_latest_tag.outputs.tag }} > tag/.ql_previous_tag
+        # git config --global user.email "you@example.com"
+        # git config --global user.name "Your Name"
+        git add tag/.ql_previous_tag
+        git commit -m "Update previous tag"
+        git push
+
+    - name: Trigger private repo workflow
+      if: steps.compare_tags.outputs.new_tag == 'true'
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: qinglong.yml
+        repo: Ecalose/docker
+        token: ${{ secrets.TOKEN }}
+        inputs: |
+          {
+            "tag": "${{ steps.get_latest_tag.outputs.tag }}"
+          }
