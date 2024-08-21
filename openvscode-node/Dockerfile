@@ -1,4 +1,5 @@
 FROM linuxserver/openvscode-server:latest
+ENV OPENVSCODE="/app/openvscode-server/bin/openvscode-server"
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 RUN apt install nodejs -y
 # RUN \
@@ -20,4 +21,4 @@ RUN \
         ms-python.python \
         ms-python.debugpy \
     )\
-    && for ext in "${exts[@]}"; do /app/openvscode-server/bin/openvscode-server --install-extension "${ext}"; done
+    && for ext in "${exts[@]}"; do ${OPENVSCODE} --install-extension "${ext}"; done
