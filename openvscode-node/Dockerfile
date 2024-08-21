@@ -3,7 +3,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 RUN apt install nodejs -y
 RUN \
     sudo apt update \
-# List the extensions in this array
+    # List the extensions in this array
     && exts=(\
         # From https://open-vsx.org/ registry directly
         gitpod.gitpod-theme \
