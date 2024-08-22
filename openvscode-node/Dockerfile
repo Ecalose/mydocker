@@ -13,5 +13,5 @@ RUN apt install nodejs -y
 #     )\
 #     # Install the $exts
 #     && for ext in "${exts[@]}"; do /app/openvscode-server/bin/openvscode-server --install-extension "${ext}"; done
-RUN exts="Vue.volar linuxsuren.webhook" && \
+RUN exts=(Vue.volar linuxsuren.webhook) && \
     for ext in $exts; do${OPENVSCODE} --install-extension "$ext"; done
