@@ -11,6 +11,18 @@ RUN \
         Vue.volar \
         Alibaba-Cloud.tongyi-lingma \
         linuxsuren.webhook \
+        stylelint.vscode-stylelint \
+        esbenp.prettier-vscode \
+        dbaeumer.vscode-eslint \
+        antfu.unocss \
+        antfu.iconify \
+        evils.uniapp-vscode \
+        uni-helper.uni-helper-vscode \
+        uni-helper.uni-app-schemas-vscode \
+        uni-helper.uni-highlight-vscode \
+        uni-helper.uni-ui-snippets-vscode \
+        uni-helper.uni-app-snippets-vscode \
+        mrmlnc.vscode-json5 \
     )\
     # Install the $exts
     && for ext in "${exts[@]}"; do /app/openvscode-server/bin/openvscode-server --install-extension "${ext}"; done
