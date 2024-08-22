@@ -22,7 +22,6 @@ RUN \
         uni-helper.uni-highlight-vscode \
         uni-helper.uni-ui-snippets-vscode \
         uni-helper.uni-app-snippets-vscode \
-        mrmlnc.vscode-json5 \
     )\
     # Install the $exts
     && for ext in "${exts[@]}"; do /app/openvscode-server/bin/openvscode-server --install-extension "${ext}"; done
