@@ -1,4 +1,4 @@
-name: ci
+name: update version
 
 on:
   schedule:
