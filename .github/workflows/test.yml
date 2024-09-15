@@ -1,4 +1,4 @@
-name: 构建镜像：alpine-ql
+name: test
 
 on:
   workflow_dispatch:
