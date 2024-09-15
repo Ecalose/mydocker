@@ -1,12 +1,11 @@
-name: 构建镜像：sub
-
+name: 构建镜像：subconverter
 on:
   schedule:
     - cron: 33 12 * * *
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: sub
+  IMAGE_NAME: subconverter
 
 jobs:
   build:
