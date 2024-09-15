@@ -1,4 +1,4 @@
-name: 构建镜像：alpine-ql-jd
+name: 构建镜像：sub
 
 on:
   schedule:
