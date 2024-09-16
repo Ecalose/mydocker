@@ -1,0 +1,45 @@
+name: 构建镜像：filebrowser
+
+on:
+  schedule:
+    - cron: 13 5 * * *
+  workflow_dispatch:
+
+jobs:
+  check_tag:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout this repo
+      uses: actions/checkout@v4
+
+    - name: Get Latest Tag
+      id: get_latest_tag
+      run: |
+        latest_tag=$(curl -s "https://api.github.com/repos/filebrowser/filebrowser/tags" | jq '.[0].name' | tr -d '"')
+        # 移除标签前的 'v' 前缀
+        clean_tag=${latest_tag#v}
+        echo "::set-output name=tag::$clean_tag"
+
+    - name: Compare Tags
+      id: compare_tags
+      run: |
+        echo "latest_tag=${{ steps.get_latest_tag.outputs.tag }}"
+        echo "previous_tag=$(cat tag/.filebrowser_previous_tag)"
+        if [ "${{ steps.get_latest_tag.outputs.tag }}" != "$(cat tag/.filebrowser_previous_tag)" ]; then
+          echo "New tag found: ${{ steps.get_latest_tag.outputs.tag }}"
+          echo "::set-output name=new_tag::true"
+          echo "${{ steps.get_latest_tag.outputs.tag }}" > tag/.filebrowser_previous_tag
+        else
+          echo "::set-output name=new_tag::false"
+        fi
+      shell: bash
+
+    - name: Store Previous Tag
+      if: steps.compare_tags.outputs.new_tag == 'true'
+      run: |
+        echo ${{ steps.get_latest_tag.outputs.tag }} > tag/.filebrowser_previous_tag
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add tag/.filebrowser_previous_tag
+        git commit -m "Update previous tag"
+        git push
