@@ -46,7 +46,7 @@ jobs:
 
   build:
     needs: check_tag
-    if: env.new_tag == 'true'
+    if: ${{ env.new_tag == 'true' }}
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
