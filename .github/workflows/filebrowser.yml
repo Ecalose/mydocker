@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout this repo
       uses: actions/checkout@v4
+      with:
+        persist-credentials: false
 
     - name: Get Latest Tag
       id: get_latest_tag
@@ -18,34 +20,33 @@ jobs:
         latest_tag=$(curl -s "https://api.github.com/repos/filebrowser/filebrowser/tags" | jq '.[0].name' | tr -d '"')
         # 移除标签前的 'v' 前缀
         clean_tag=${latest_tag#v}
-        echo "::set-output name=tag::$clean_tag"
+        echo "clean_tag=$clean_tag" >>$GITHUB_ENV
 
     - name: Compare Tags
       id: compare_tags
       run: |
-        echo "latest_tag=${{ steps.get_latest_tag.outputs.tag }}"
-        echo "previous_tag=$(cat tag/.filebrowser_previous_tag)"
-        if [ "${{ steps.get_latest_tag.outputs.tag }}" != "$(cat tag/.filebrowser_previous_tag)" ]; then
-          echo "New tag found: ${{ steps.get_latest_tag.outputs.tag }}"
-          echo "::set-output name=new_tag::true"
-          echo "${{ steps.get_latest_tag.outputs.tag }}" > tag/.filebrowser_previous_tag
+        previous_tag=$(cat tag/.filebrowser_previous_tag)
+        if [ "${{ env.clean_tag }}" != "$previous_tag" ]; then
+          echo "New tag found: ${{ env.clean_tag }}"
+          echo "new_tag=true" >> $GITHUB_ENV
+          echo "${{ env.clean_tag }}" > tag/.filebrowser_previous_tag
         else
-          echo "::set-output name=new_tag::false"
+          echo "new_tag=false" >> $GITHUB_ENV
         fi
       shell: bash
 
     - name: Store Previous Tag
-      if: steps.compare_tags.outputs.new_tag == 'true'
+      if: env.new_tag == 'true'
       run: |
-        echo ${{ steps.get_latest_tag.outputs.tag }} > tag/.filebrowser_previous_tag
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add tag/.filebrowser_previous_tag
         git commit -m "Update previous tag"
         git push
+
   build:
     needs: check_tag
-    if: needs.compare_tags.outputs.new_tag == 'true'
+    if: env.new_tag == 'true'
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -56,12 +57,12 @@ jobs:
           - linux/arm64
     steps:
       - name: Set tag as environment variable
-        run: echo "FILEBROWSER_VER=$(cat tag/.filebrowser_previous_tag)" >>$GITHUB_ENV
+        run: echo "FILEBROWSER_VER=${{ env.clean_tag }}" >>$GITHUB_ENV
       -
         name: Prepare
         run: |
           platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          echo "PLATFORM_PAIR=${platform//\//-}" >>$GITHUB_ENV
       -
         name: Checkout
         uses: actions/checkout@v4
