@@ -45,7 +45,7 @@ jobs:
         git push
   build:
     needs: check_tag
-    if: needs.check_tag.outputs.new_tag == 'true'
+    if: needs.compare_tags.outputs.new_tag == 'true'
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
